@@ -1,0 +1,32 @@
+services:
+  api:
+    build: .                      # builds using the Dockerfile in this folder
+    restart: unless-stopped
+    environment:
+      # api reaches postgres using the SERVICE NAME "postgres" as the host,
+      # never "localhost" -- localhost inside a container means the container itself
+      DATABASE_URL: postgres://appuser:apppassword@postgres:5432/wildlife
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      JWT_SECRET: change-this-to-a-real-secret
+    depends_on:
+      - postgres
+      - minio
+    ports:
+      - "3000:3000"                # host:container -- lets Caddy (or you) reach it
+
+  postgres:
+    image: postgis/postgis:16-3.4  # comes with PostGIS pre-installed
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: apppassword
+      POSTGRES_DB: wildlife
+    volumes:
+      - postgres_data:/var/lib/postgresql/data   # named volume -- data survives restarts
+    ports:
+      - "5432:5432"                 # optional: only needed if you want to connect from your own machine
+
+  
+volumes:
+  postgres_data:
