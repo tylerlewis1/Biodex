@@ -6,12 +6,9 @@ services:
       # api reaches postgres using the SERVICE NAME "postgres" as the host,
       # never "localhost" -- localhost inside a container means the container itself
       DATABASE_URL: postgres://appuser:apppassword@postgres:5432/wildlife
-      MINIO_ENDPOINT: minio
-      MINIO_PORT: 9000
       JWT_SECRET: change-this-to-a-real-secret
     depends_on:
       - postgres
-      - minio
     ports:
       - "3000:3000"                # host:container -- lets Caddy (or you) reach it
 
