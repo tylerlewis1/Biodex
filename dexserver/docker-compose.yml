@@ -5,8 +5,8 @@ services:
     environment:
       # api reaches postgres using the SERVICE NAME "postgres" as the host,
       # never "localhost" -- localhost inside a container means the container itself
-      DATABASE_URL: postgres://appuser:apppassword@postgres:5432/wildlife
-      JWT_SECRET: change-this-to-a-real-secret
+      DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@postgres:5432/dexdb
+      JWT_SECRET: ${JWT_SECRET}
     depends_on:
       - postgres
     ports:
@@ -16,14 +16,13 @@ services:
     image: postgis/postgis:16-3.4  # comes with PostGIS pre-installed
     restart: unless-stopped
     environment:
-      POSTGRES_USER: appuser
-      POSTGRES_PASSWORD: apppassword
-      POSTGRES_DB: wildlife
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+      POSTGRES_DB: dexdb
     volumes:
       - postgres_data:/var/lib/postgresql/data   # named volume -- data survives restarts
     ports:
       - "5432:5432"                 # optional: only needed if you want to connect from your own machine
 
-  
 volumes:
   postgres_data:
